@@ -10,7 +10,13 @@ require("dotenv").config();
 const { connectToMongodb } = require("./db/db");
 
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+var osRouter = require("./routes/osRouter");
+var confAPIRouter = require("./routes/confAPIRouter");
+var serviceAPIRouter = require("./routes/serviceAPIRouter");
+var productRouter = require("./routes/productRouter");
+var factureRouter = require("./routes/factureRouter");
+var userRouter = require("./routes/userRouter");
+var clientRouter = require("./routes/clientRouter");
 
 var app = express();
 
@@ -21,7 +27,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/configuration", confAPIRouter);
+app.use("/service",serviceAPIRouter);
+app.use("/produit",productRouter);
+app.use("/facture",factureRouter);
+app.use("/user",userRouter);
+app.use("/client", clientRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -41,5 +52,5 @@ app.use(function (err, req, res, next) {
 
 const server = http.createServer(app);
 server.listen(process.env.Port, () => {
-  connectToMongodb(), console.log("app is running on port 5000");
+  connectToMongodb(), console.log("app is running on port 5001");
 });
