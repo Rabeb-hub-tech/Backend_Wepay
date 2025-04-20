@@ -67,3 +67,31 @@ module.exports.deletFactureById = async (req,res)=>{
         res.status(500).json(error.message)
     }
 }
+
+module.exports.addService = async (req,res)=>{
+    try {
+        
+        const {path,methode,parametre}=req.body
+
+        const newService = new factureModel({
+            path,methode,parametre
+        })
+
+        const serviceadded = await newService.save()
+
+        res.status(200).json(serviceadded)
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+module.exports.deletServiceById = async (req,res)=>{
+    try {
+        const {id}=req.params
+        await factureModel.findByIdAndDelete(id)
+
+        res.status(200).json("deleted")
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}

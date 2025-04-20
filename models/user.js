@@ -7,6 +7,13 @@ const user = new mongoose.Schema({
     nomCommercial: String,
     email: { type: String, require: true, unique: true },
     password: {type :String, require:true , minLength : 8 },
+    crmConfigured: { type: Boolean, default: false },
+    label: String,  
+    typeAPI: String, 
+    url: { type: String, require: true, unique: true },      
+    nbServices: Number,    
+    securityType: String ,
+    token: String
 },{timestamps:true});
 
 user.pre("save",async function(next){

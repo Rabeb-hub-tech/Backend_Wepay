@@ -11,8 +11,6 @@ const { connectToMongodb } = require("./db/db");
 
 var indexRouter = require("./routes/index");
 var osRouter = require("./routes/osRouter");
-var confAPIRouter = require("./routes/confAPIRouter");
-var serviceAPIRouter = require("./routes/serviceAPIRouter");
 var productRouter = require("./routes/productRouter");
 var factureRouter = require("./routes/factureRouter");
 var userRouter = require("./routes/userRouter");
@@ -27,8 +25,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/configuration", confAPIRouter);
-app.use("/service",serviceAPIRouter);
 app.use("/produit",productRouter);
 app.use("/facture",factureRouter);
 app.use("/user",userRouter);

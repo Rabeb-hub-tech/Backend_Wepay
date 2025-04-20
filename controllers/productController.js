@@ -1,4 +1,4 @@
-const mongoose =require('mongoose');
+const mongoose =require('mongoose')
 const productModel = require('../models/product')
 
 module.exports.getAllProduct = async (req,res)=>{
@@ -15,11 +15,11 @@ module.exports.getAllProduct = async (req,res)=>{
 module.exports.addProduct = async (req,res)=>{
     try {
         
-        const {nom,prix,quantite,product_image}=req.body
+        const {nom,prix,quantite}=req.body
 
 
         const newProduct = new productModel({
-            nom,prix,quantite,product_image
+            nom,prix,quantite
         })
 
         const productadded = await newProduct.save()
@@ -33,10 +33,10 @@ module.exports.addProduct = async (req,res)=>{
 module.exports.updateProduct = async (req,res)=>{
     try {
         const {id}=req.params
-        const {prix,quantite,product_image}=req.body
+        const {prix,quantite}=req.body
         
         await userModel.findByIdAndUpdate(id,{
-            $set: {prix,quantite,product_image}
+            $set: {prix,quantite}
         })
 
         const productUpdated = await productModel.findById(id)
@@ -68,3 +68,61 @@ module.exports.searchProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+module.exports.addProductWithImage = async (req, res) => {
+    try {
+    const productData = {
+        ...req.body,
+    };
+    if (req.file ) {
+        const { filename } = req.file;
+        console.log(filename);
+        productData.product_image = filename;
+    }
+    const product = new productModel(productData);
+    const addedproducts = await product.save();
+
+    res.status(200).json(addedproducts);
+    } catch (error) {
+    res.status(500).json(error.message );
+    }
+}
+
+module.exports.getAllService = async (req,res)=>{
+    try {
+        
+        const serviceList = await productModel.find()
+
+        res.status(200).json(serviceList)
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+module.exports.addService = async (req,res)=>{
+    try {
+        
+        const {path,methode,parametre}=req.body
+
+        const newService = new productModel({
+            path,methode,parametre
+        })
+
+        const serviceadded = await newService.save()
+
+        res.status(200).json(serviceadded)
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+module.exports.deletServiceById = async (req,res)=>{
+    try {
+        const {id}=req.params
+        await productModel.findByIdAndDelete(id)
+
+        res.status(200).json("deleted")
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+};

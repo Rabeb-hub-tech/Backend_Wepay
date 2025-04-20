@@ -1,8 +1,5 @@
 const userModel = require('../models/user')
 const bcrypt = require("bcrypt")
-const jwt = require('jsonwebtoken');
-
-const SECRET = 'votre_cle_secrete';
 
 module.exports.inscrire = async (req, res) => {
         try {
@@ -18,59 +15,79 @@ module.exports.inscrire = async (req, res) => {
         } catch (error) {
             res.status(500).json(error.message)
         }
-};
-
-
-module.exports.seConnecter = async (req, res) => {
-    const { email, motDePasse } = req.body;
-    try {
-        const user = await userModel.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'Utilisateur introuvable.' });
-
-        const match = await bcrypt.compare(motDePasse, user.motDePasse);
-        if (!match) return res.status(401).json({ message: 'Mot de passe incorrect.' });
-
-        const token = jwt.sign({ id: user._id }, SECRET, { expiresIn: '2h' });
-        res.json({ token });
-    } catch (err) {
-        res.status(500).json(error.message);
-    }
-};
+}
 
 module.exports.afficherProfil = async (req, res) => {
     try {
-        const user = await userModel.findById(req.userId).select('-motDePasse');
-        res.json(user);
+        const {id}=req.params
+        const user = await userModel.findById(id)
+        
+        res.status(200).json(user);
     } catch (err) {
         res.status(500).json(error.message);
     }
-};
+}
 
 module.exports.modifierProfil = async (req, res) => {
-    const { nom, prenom, nomCommercial, email } = req.body;
     try {
-        const user = await userModel.findByIdAndUpdate(
-        req.userId,
-        { nom, prenom, nomCommercial, email },
-        { new: true }
-        );
-        res.json(user);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        const {id}=req.params
+        const { nom, prenom, nomCommercial, email } = req.body;
+
+        await userModel.findByIdAndUpdate(id,{
+        $set: { nom, prenom, nomCommercial, email }
+        })
+
+        const user = await userModel.findById(id)
+
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json(error.message )
     }
-};
+}
+
+module.exports.supprimerProfil = async (req,res)=>{
+    try {
+        const {id}=req.params
+        await userModel.findByIdAndDelete(id)
+
+        res.status(200).json("deleted")
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
 
 module.exports.changerMotDePasse = async (req, res) => {
-    const { ancienMdp, nouveauMdp } = req.body;
     try {
-        const user = await userModel.findById(req.userId);
-        const match = await bcrypt.compare(ancienMdp, user.motDePasse);
-        if (!match) return res.status(401).json({ message: 'Ancien mot de passe incorrect.' });
+        const {id}=req.params
+        const {password}=req.body
+        
+        const salt = await bcrypt.genSalt()
+        const hashPassword = await bcrypt.hash(password,salt)
+        
+        const user = await userModel.findByIdAndUpdate(id,{
+            $set: {password : hashPassword}
+        })
 
-        user.motDePasse = await bcrypt.hash(nouveauMdp, 10);
-        await user.save();
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json(error.message);
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+module.exports.addAPI = async (req,res)=>{
+    try {
+        
+        const {label, typeAPI,url,nbServices,securityType,token}=req.body
+
+
+        const newConfiguration = new userModel({
+            label, typeAPI,url,nbServices,securityType,token
+        })
+
+        const confadded = await newConfiguration.save()
+
+        res.status(200).json(confadded)
+    } catch (error) {
+        res.status(500).json(error.message)
     }
 }
