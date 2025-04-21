@@ -15,6 +15,8 @@ var productRouter = require("./routes/productRouter");
 var factureRouter = require("./routes/factureRouter");
 var userRouter = require("./routes/userRouter");
 var clientRouter = require("./routes/clientRouter");
+var confRouter = require("./routes/confRouter");
+var PlibreRouter = require("./routes/PlibreRouter");
 
 var app = express();
 
@@ -29,6 +31,8 @@ app.use("/produit",productRouter);
 app.use("/facture",factureRouter);
 app.use("/user",userRouter);
 app.use("/client", clientRouter);
+app.use("/configuration",confRouter);
+app.use("/libre",PlibreRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

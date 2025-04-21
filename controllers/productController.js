@@ -1,56 +1,49 @@
-const mongoose =require('mongoose')
-const productModel = require('../models/product')
+const mongoose = require('mongoose');
+const productModel = require('../models/product');
 
-module.exports.getAllProduct = async (req,res)=>{
+module.exports.getAllProduct = async (req, res) => {
     try {
-        
-        const productList = await productModel.find()
-
-        res.status(200).json(productList)
+        const productList = await productModel.find({ service: false });
+        res.status(200).json(productList);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json(error.message);
     }
-}
+};
 
-module.exports.addProduct = async (req,res)=>{
+module.exports.addProduct = async (req, res) => {
     try {
-        
-        const {nom,prix,quantite}=req.body
-
+        const { nom, prix, quantite } = req.body;
 
         const newProduct = new productModel({
-            nom,prix,quantite
-        })
+            nom, prix, quantite
+        });
 
-        const productadded = await newProduct.save()
-
-        res.status(200).json(productadded)
+        const productadded = await newProduct.save();
+        res.status(200).json(productadded);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json(error.message);
     }
-}
+};
 
-module.exports.updateProduct = async (req,res)=>{
+module.exports.updateProduct = async (req, res) => {
     try {
-        const {id}=req.params
-        const {prix,quantite}=req.body
-        
-        await userModel.findByIdAndUpdate(id,{
-            $set: {prix,quantite}
-        })
+        const { id } = req.params;
+        const { prix, quantite } = req.body;
 
-        const productUpdated = await productModel.findById(id)
+        await productModel.findByIdAndUpdate(id, {
+            $set: { prix, quantite }
+        });
 
-        res.status(200).json(productUpdated)
+        const productUpdated = await productModel.findById(id);
+        res.status(200).json(productUpdated);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json(error.message);
     }
-}
+};
 
 module.exports.searchProduct = async (req, res) => {
     try {
         const { query } = req.query;
-
         const searchConditions = [];
 
         if (mongoose.Types.ObjectId.isValid(query)) {
@@ -60,69 +53,69 @@ module.exports.searchProduct = async (req, res) => {
         searchConditions.push({ nom: { $regex: query, $options: 'i' } });
 
         const products = await productModel.find({
-            $or: searchConditions
+            $or: searchConditions,
+            service: false
         });
 
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 module.exports.addProductWithImage = async (req, res) => {
     try {
-    const productData = {
-        ...req.body,
-    };
-    if (req.file ) {
-        const { filename } = req.file;
-        console.log(filename);
-        productData.product_image = filename;
-    }
-    const product = new productModel(productData);
-    const addedproducts = await product.save();
+        const productData = { ...req.body };
 
-    res.status(200).json(addedproducts);
+        if (req.file) {
+            const { filename } = req.file;
+            productData.product_image = filename;
+        }
+
+        const product = new productModel(productData);
+        const addedproducts = await product.save();
+
+        res.status(200).json(addedproducts);
     } catch (error) {
-    res.status(500).json(error.message );
+        res.status(500).json(error.message);
     }
-}
+};
 
-module.exports.getAllService = async (req,res)=>{
+// ========== GESTION DES SERVICES ==========
+
+module.exports.getAllService = async (req, res) => {
     try {
-        
-        const serviceList = await productModel.find()
-
-        res.status(200).json(serviceList)
+        const serviceList = await productModel.find({ service: true });
+        res.status(200).json(serviceList);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json(error.message);
     }
-}
+};
 
-module.exports.addService = async (req,res)=>{
+module.exports.addService = async (req, res) => {
     try {
-        
-        const {path,methode,parametre}=req.body
+        const { path, methode, parametre } = req.body;
 
         const newService = new productModel({
-            path,methode,parametre
-        })
+            path,
+            methode,
+            parametre,
+            service: true // obligatoire
+        });
 
-        const serviceadded = await newService.save()
-
-        res.status(200).json(serviceadded)
+        const serviceadded = await newService.save();
+        res.status(200).json(serviceadded);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json(error.message);
     }
-}
+};
 
-module.exports.deletServiceById = async (req,res)=>{
+module.exports.deletServiceById = async (req, res) => {
     try {
-        const {id}=req.params
-        await productModel.findByIdAndDelete(id)
-
-        res.status(200).json("deleted")
+        const { id } = req.params;
+        await productModel.findByIdAndDelete(id);
+        res.status(200).json("deleted");
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json(error.message);
     }
 };

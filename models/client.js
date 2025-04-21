@@ -5,15 +5,16 @@ const parametreSchema = new mongoose.Schema({
     valeur: String
 }, { _id: false });
 
-const client = new mongoose.Schema({
+const clientSchema = new mongoose.Schema({
     nom: String,
-    prenom: {type :String,minLength :3 , maxLength : 15},
-    email: { type: String, require: true, unique: true },
+    prenom: { type: String, minLength: 3, maxLength: 15 },
+    email: { type: String, required: true, unique: true },
     telephone: Number,
+    service: { type: Boolean, default: false },
     path: String,
     methode: String,
     parametre: [parametreSchema]
-},{timestamps:true});
+}, { timestamps: true });
 
-const Client = mongoose.model("Client",client);
+const Client = mongoose.model("Client", clientSchema);
 module.exports = Client;

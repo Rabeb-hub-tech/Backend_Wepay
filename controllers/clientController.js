@@ -1,85 +1,77 @@
-const clientModel = require('../models/client')
+const clientModel = require('../models/client');
 
-module.exports.addClient = async (req,res)=>{
+module.exports.addClient = async (req, res) => {
     try {
-        
-        const {nom, prenom,email,telephone}=req.body
+        const { nom, prenom, email, telephone } = req.body;
 
-        const newClient = new clientModel({
-            nom, prenom,email,telephone
-        })
+        const newClient = new clientModel({ nom, prenom, email, telephone });
+        const clientAdded = await newClient.save();
 
-        const clientadded = await newClient.save()
-
-        res.status(200).json(clientadded)
+        res.status(200).json(clientAdded);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
-module.exports.updateClient = async (req,res)=>{
+module.exports.updateClient = async (req, res) => {
     try {
-        const {id}=req.params
-        const {email,telephone}=req.body
-        
-        await clientModel.findByIdAndUpdate(id,{
-            $set: {email,telephone}
-        })
+        const { id } = req.params;
+        const { email, telephone } = req.body;
 
-        const client = await clientModel.findById(id)
+        await clientModel.findByIdAndUpdate(id, { $set: { email, telephone } });
+        const updatedClient = await clientModel.findById(id);
 
-        res.status(200).json(client)
+        res.status(200).json(updatedClient);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
-module.exports.deletClientById = async (req,res)=>{
+module.exports.deleteClientById = async (req, res) => {
     try {
-        const {id}=req.params
-        await clientModel.findByIdAndDelete(id)
+        const { id } = req.params;
+        await clientModel.findByIdAndDelete(id);
 
-        res.status(200).json("deleted")
+        res.status(200).json({ message: "Client deleted" });
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
-module.exports.getAllClient = async (req,res)=>{
+module.exports.getAllClients = async (req, res) => {
     try {
-        
-        const clientList = await clientModel.find()
-
-        res.status(200).json(clientList)
+        const clientList = await clientModel.find();
+        res.status(200).json(clientList);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
-module.exports.addService = async (req,res)=>{
+module.exports.addService = async (req, res) => {
     try {
-        
-        const {path,methode,parametre}=req.body
+        const { path, methode, parametre } = req.body;
 
         const newService = new clientModel({
-            path,methode,parametre
-        })
+            path,
+            methode,
+            parametre,
+            service: true
+        });
 
-        const serviceadded = await newService.save()
-
-        res.status(200).json(serviceadded)
+        const serviceAdded = await newService.save();
+        res.status(200).json(serviceAdded);
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
-module.exports.deletServiceById = async (req,res)=>{
+module.exports.deleteServiceById = async (req, res) => {
     try {
-        const {id}=req.params
-        await clientModel.findByIdAndDelete(id)
+        const { id } = req.params;
+        await clientModel.findByIdAndDelete(id);
 
-        res.status(200).json("deleted")
+        res.status(200).json({ message: "Service deleted" });
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ error: error.message });
     }
-}
+};
