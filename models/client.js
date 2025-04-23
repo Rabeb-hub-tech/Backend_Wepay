@@ -8,7 +8,13 @@ const parametreSchema = new mongoose.Schema({
 const clientSchema = new mongoose.Schema({
     nom: String,
     prenom: { type: String, minLength: 3, maxLength: 15 },
-    email: { type: String, required: true, unique: true },
+    email: {
+        type: String,
+        required: function () {
+            return !this.service; // Email requis uniquement si ce n'est pas un "service"
+        },
+        unique: true
+    },
     telephone: Number,
     service: { type: Boolean, default: false },
     path: String,

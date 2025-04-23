@@ -1,19 +1,39 @@
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
 
 const parametreSchema = new mongoose.Schema({
     id: String,
     valeur: String
 }, { _id: false });
 
-const facture = new mongoose.Schema({
+const factureSchema = new mongoose.Schema({
     nomClient: String,
     montantTotal: Number,
-   // produit: List,
     estPayee: Boolean,
+    service: { type: Boolean, default: false },
     path: String,
     methode: String,
     parametre: [parametreSchema]
-},{timestamps:true});
+}, { timestamps: true });
 
-const Facture =mongoose.model("Facture",facture);
-module.exports = Facture;
+factureSchema.methods.envoyerParEmail = async function(destinataire) {
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "ton.email@gmail.com",
+            pass: "ton_mot_de_passe_app" // utilise un mot de passe d'application (pas ton mot de passe perso !)
+        }
+    });
+
+    const mailOptions = {
+        from: '"Facture Service" <ton.email@gmail.com>',
+        to: destinataire,
+        subject: `Facture pour ${this.nomClient}`,
+        text: `Bonjour,\n\nVoici les détails de la facture :\n- Client: ${this.nomClient}\n- Montant: ${this.montantTotal}€\n- Payée: ${this.estPayee ? "Oui" : "Non"}\n\nMerci.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+};
+
+const FactureModel = mongoose.model("Facture", factureSchema);
+module.exports = FactureModel;
