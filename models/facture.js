@@ -20,8 +20,8 @@ factureSchema.methods.envoyerParEmail = async function(destinataire) {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: "ton.email@gmail.com",
-            pass: "ton_mot_de_passe_app" // utilise un mot de passe d'application (pas ton mot de passe perso !)
+            user: "rabebyakoubi4@gmail.com",
+            pass: "owtp qyqk ljdn emay" // utilise un mot de passe d'application (pas ton mot de passe perso !)
         }
     });
 

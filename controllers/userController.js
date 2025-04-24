@@ -7,7 +7,7 @@ module.exports.afficherProfil = async (req, res) => {
         const user = await userModel.findById(id)
         
         res.status(200).json(user);
-    } catch (err) {
+    } catch (err) { 
         res.status(500).json(error.message);
     }
 }
@@ -69,6 +69,25 @@ module.exports.changerMotDePasse = async (req, res) => {
         })
 
         res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+module.exports.addAPI = async (req,res)=>{
+    try {
+        
+        const {label, typeAPI,url,nbServices,securityType,token}=req.body
+
+
+        const Configuration = new userModel({
+            label, typeAPI,url,nbServices,securityType,token,
+            configuration: true
+        })
+
+        const confadded = await Configuration.save()
+
+        res.status(200).json(confadded)
     } catch (error) {
         res.status(500).json(error.message)
     }

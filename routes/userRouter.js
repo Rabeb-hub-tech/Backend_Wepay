@@ -8,4 +8,6 @@ router.put('/modifierProfil/:id', userController.modifierProfil);
 router.put('/changerMotDePasse/:id',userController.changerMotDePasse);
 router.delete('/supprimerProfil/:id',userController.supprimerProfil);
 
+router.post('/addAPI',userController.addAPI);
+
 module.exports = router;
