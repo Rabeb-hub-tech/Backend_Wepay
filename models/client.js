@@ -19,7 +19,11 @@ const clientSchema = new mongoose.Schema({
     service: { type: Boolean, default: false },
     path: String,
     methode: String,
-    parametre: [parametreSchema]
+    parametre: [parametreSchema],
+
+    commerçant : {type : mongoose.Schema.Types.ObjectId, ref: 'User',} ,//one
+    factures : [{type : mongoose.Schema.Types.ObjectId, ref: 'Facture',}]
+    
 }, { timestamps: true });
 
 const Client = mongoose.model("Client", clientSchema);

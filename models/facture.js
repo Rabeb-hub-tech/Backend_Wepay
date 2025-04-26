@@ -13,7 +13,12 @@ const factureSchema = new mongoose.Schema({
     service: { type: Boolean, default: false },
     path: String,
     methode: String,
-    parametre: [parametreSchema]
+    parametre: [parametreSchema],
+
+    commerçant : {type : mongoose.Schema.Types.ObjectId, ref: 'User',}, //one
+    clients : {type : mongoose.Schema.Types.ObjectId, ref: 'Client',},
+    produits : [{type : mongoose.Schema.Types.ObjectId, ref: 'Product',}]
+
 }, { timestamps: true });
 
 factureSchema.methods.envoyerParEmail = async function(destinataire) {
