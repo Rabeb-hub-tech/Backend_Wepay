@@ -1,20 +1,20 @@
 const FactureModel = require("../models/facture");
+const ClientModel = require('../models/client'); // ou le chemin correct vers ton modèle
 
-// Get all factures
+
 module.exports.getAllFacture = async (req, res) => {
     try {
-        const factureList = await FactureModel.find();
+        const factureList = await FactureModel.find().populate('produits');
         res.status(200).json(factureList);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// Get facture by ID
 module.exports.getFactureById = async (req, res) => {
     try {
         const { id } = req.params;
-        const facture = await FactureModel.findById(id);
+        const facture = await FactureModel.findById(id).populate('produits');
         if (!facture) return res.status(404).json({ message: "Facture not found" });
         res.status(200).json(facture);
     } catch (error) {
@@ -22,17 +22,32 @@ module.exports.getFactureById = async (req, res) => {
     }
 };
 
+
 // Add new facture
 module.exports.addFacture = async (req, res) => {
     try {
-        const { nomClient, montantTotal, estPayee } = req.body;
-        const newFacture = new FactureModel({ nomClient, montantTotal, estPayee });
+        const { nomClient, montantTotal, estPayee, produits, clientId } = req.body;
+
+        const newFacture = new FactureModel({
+            nomClient,
+            montantTotal,
+            estPayee,
+            produits, // Ajout de la liste des produits
+            clients: clientId // RELIER LA FACTURE AU CLIENT
+        });
+
         const factureAdded = await newFacture.save();
+
+        // Maintenant, mettre à jour le client pour ajouter la facture
+        await ClientModel.findByIdAndUpdate(clientId, {
+        $push: { factures: factureAdded._id }
+});
         res.status(200).json(factureAdded);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Update existing facture
 module.exports.updateFacture = async (req, res) => {

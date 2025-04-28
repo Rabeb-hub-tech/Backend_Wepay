@@ -45,6 +45,21 @@ user.pre("save", async function (next) {
     }
 });
 
+user.statics.login = async function (email, password) {
+    const user = await this.findOne({ email });
+    if (user) {
+        const auth = await bcrypt.compare(password, user.password);
+        if (auth) {
+        //if (user.isActive) {
+            return user;
+        //}
+        //throw new Error("compte desactiver");
+        }
+        throw new Error("incorrect password");
+    }
+    throw new Error("incorrect email");
+};
+
 
 const User = mongoose.model("User", user);
 module.exports = User;
